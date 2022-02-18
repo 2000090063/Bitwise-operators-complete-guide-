@@ -1,0 +1,42 @@
+____________________________________*****************Built-in functions***************__________________________________________
+
+ In C++, __builtin_popcount(x) returns popcount of a number — the number of ones in the binary representation of x. Use __builtin_popcountll(x) for long longs.
+
+ There are also __builtin_clz and __builtin_ctz (and their long long versions) for counting the number of leading or trailing zeros in a positive number. Read more here. Now, try to solve these two simple tasks in O(1), then open the spoiler to check the solution:
+
+Compute the biggest power of 2 that is a divisor of x. Example: f(12) = 4
+Compute the smallest power of 2 that is not smaller than x. Example: f(12) = 16
+While popcount is often needed, I rarely use the other two functions. During a contest, I would solve the two tasks above in O(logx) with simple while-loops, because it's easier and more intuitive for me. Just be aware that these can be done in O(1), and use clz or ctz if you need to speed up your solution.
+
+______
+_________________________________******************Motivation behind bitsets******************____________________________________
+Consider this problem: There are N≤5000 workers. Each worker is available during some days of this month (which has 30 days). For each worker, you are given a set of numbers, each from interval [1,30], representing his/her availability. You need to assign an important project to two workers but they will be able to work on the project only when they are both available. Find two workers that are best for the job — maximize the number of days when both these workers are available.
+
+You can compute the intersection of two workers (two sets) in O(30) by using e.g. two pointers for two sorted sequences. Doing that for every pair of workers is O(N2⋅30), slightly too slow.
+
+We can think about the availability of a worker as a binary string of length 30, which can be stored in a single int. With this representation, we can count the intersection size in O(1) by using __builtin_popcount(x[i] & x[j]). The complexity becomes O(N2), fast enough.
+
+What if we are given the availability for the whole year or in general for D days? We can handle D≤64 in a single unsigned long long, what about bigger D?
+
+We can split D days into convenient parts of size 64 and store the availability of a single worker in an array of D64 unsigned long longs. Then, the intersection can be computed in O(D64) and the whole complexity is O(N2⋅D64).
+
+code
+So, we can simulate a long binary number with multiple unsigned long longs. The implementation isn't that bad but doing binary shifts would be quite ugly. Turns out all of this can be done with bitsets easily.
+_____________
+_________________________________**************************************************************____________________________________________
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$________________Bitsets__________________________$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+       bitset<365> is a binary number with 365 bits available, and it supports most of binary operations. The code above changes into simple:
+
+       code
+       Some functions differ, e.g. x.count() instead of __builtin_popcount(x) but it's only more convenient. You can read and print binary numbers, construct a bitset from int or string bitset<100> a(17); bitset<100> b("1010");. You can even access particular bits with b[i]. Read more in C++ reference https://en.cppreference.com/w/cpp/utility/bitset.
+
+       Note that the size of the bitset must be a constant number. You can't read n and then declare bitset<n> john;. If n is up to 100, just create bitset<100>.
+
+       The complexity of bitwise operations is O(size32) or O(size64), it depends on the architecture of your computer.
+       
+       
+       
+       
+                              ######################################## THE END  #################################################
